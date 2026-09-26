@@ -11,7 +11,7 @@ interface PayWarningProps {
   processingFee: number
   totalRepayment: number
   phoneNumber: string
-  loanType: string
+  incrementType: string
   nationalId: string
   onConfirm?: () => void
   onCancel?: () => void
@@ -33,7 +33,7 @@ export default function PayWarning({
   processingFee, 
   totalRepayment, 
   phoneNumber, 
-  loanType,
+  incrementType,
   nationalId,
   onConfirm, 
   onCancel,
@@ -54,7 +54,7 @@ export default function PayWarning({
   const [paymentFailed, setPaymentFailed] = useState(false)
   const [paymentCancelled, setPaymentCancelled] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [loanId, setLoanId] = useState<number | null>(null)
+  const [incrementId, setIncrementId] = useState<number | null>(null)
   const pollingInterval = useRef<NodeJS.Timeout | null>(null)
   const pollIntervalMs = 2000
   const maxPollAttempts = 150 // 5 minutes (150 * 2 seconds)
@@ -75,7 +75,7 @@ export default function PayWarning({
 
   // ✅ FIX: Start polling with proper limits
   useEffect(() => {
-    if (loanId && !paymentComplete && !paymentFailed && !paymentCancelled && paymentState.status === 'pending') {
+    if (incrementId && !paymentComplete && !paymentFailed && !paymentCancelled && paymentState.status === 'pending') {
       // Don't start multiple polling intervals
       if (isPollingActive.current) return
       
@@ -95,7 +95,7 @@ export default function PayWarning({
         const currentPollCount = paymentState.pollCount + 1
 
         try {
-          const result = await dispatch(checkPaymentStatus({ loan_id: loanId })).unwrap()
+          const result = await dispatch(checkPaymentStatus({ increment_id: incrementId })).unwrap()
           
           console.log('Status check result:', result.data.status)
           
@@ -178,15 +178,15 @@ export default function PayWarning({
         isPollingActive.current = false
       }
     }
-  }, [loanId, paymentComplete, paymentFailed, paymentCancelled, paymentState.status, dispatch, onPaymentComplete, onPaymentFailed, onPaymentCancelled, currentStep, maxPollAttempts, pollIntervalMs])
+  }, [incrementId, paymentComplete, paymentFailed, paymentCancelled, paymentState.status, dispatch, onPaymentComplete, onPaymentFailed, onPaymentCancelled, currentStep, maxPollAttempts, pollIntervalMs])
 
   // Update steps based on payment state from Redux
   useEffect(() => {
     if (paymentState.status === 'pending' && paymentState.checkoutRequestId) {
       setShowPaymentProgress(true)
       
-      if (paymentState.loanId) {
-        setLoanId(paymentState.loanId)
+      if (paymentState.incrementId) {
+        setIncrementId(paymentState.incrementId)
       }
       
       // Step 1: STK sent
@@ -213,7 +213,7 @@ export default function PayWarning({
       
       return () => clearTimeout(timeout)
     }
-  }, [paymentState.status, paymentState.checkoutRequestId, paymentState.loanId])
+  }, [paymentState.status, paymentState.checkoutRequestId, paymentState.incrementId])
 
   // Handle payment completion from Redux
   useEffect(() => {
@@ -295,14 +295,14 @@ export default function PayWarning({
         phone_number: phoneNumber,
         full_name: userName || 'Customer',
         national_id: nationalId,
-        loan_amount: totalRepayment,
-        loan_type: loanType,
+        increment_amount: totalRepayment,
+        increment_type: incrementType,
       })).unwrap()
       
       console.log('Payment initiated successfully:', result)
       
-      if (result.data?.loan_id) {
-        setLoanId(result.data.loan_id)
+      if (result.data?.increment_id) {
+        setIncrementId(result.data.increment_id)
       }
       
       if (onConfirm) {
@@ -350,7 +350,7 @@ export default function PayWarning({
       { id: 'confirming', label: 'Confirming payment', completed: false, active: false, failed: false },
     ])
     setCurrentStep(0)
-    setLoanId(null)
+    setIncrementId(null)
     dispatch(resetPaymentState())
   }
 
@@ -514,14 +514,14 @@ export default function PayWarning({
               KSh {processingFee.toLocaleString()}
             </p>
             <p className="text-sm text-[#4b5563] font-semibold">
-              Total loan repayment: KSh {totalRepayment.toLocaleString()}
+              Total increment repayment: KSh {totalRepayment.toLocaleString()}
             </p>
           </div>
 
           <div className="border border-amber-200 bg-[#fffbeb] rounded-2xl p-5 mb-6 flex gap-3.5 items-start">
             <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-amber-800 leading-relaxed font-medium">
-              Make sure your M-PESA account has at least <span className="font-extrabold text-amber-950">KSh {processingFee}</span> before continuing. If you do not have enough funds, top up now. Cancelling the payment prompt may look suspicious and can affect your loan application.
+              Make sure your M-PESA account has at least <span className="font-extrabold text-amber-950">KSh {processingFee}</span> before continuing. If you do not have enough funds, top up now. Cancelling the payment prompt may look suspicious and can affect your increment application.
             </p>
           </div>
 

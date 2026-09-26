@@ -3,9 +3,9 @@
 import React, { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import PayWarningClient from './PayWarningClient'
-import { getFeeAndRate } from '../../utils/loan'
+import { getFeeAndRate } from '../../utils/increment'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { fetchLoanTypes } from '@/store/loanSlice'
+import { fetchIncrementTypes } from '@/store/incrementSlice'
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react'
 
 export default function Page() {
@@ -28,7 +28,7 @@ function PayWarningPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const dispatch = useAppDispatch()
-  const { loanTypes, status } = useAppSelector((state) => state.loan)
+  const { incrementTypes, status } = useAppSelector((state) => state.increment)
   const [paymentError, setPaymentError] = useState<string | null>(null)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [paymentCancelled, setPaymentCancelled] = useState(false)
@@ -36,33 +36,33 @@ function PayWarningPageContent() {
   const amount = Number(searchParams.get('amount')) || 0
   const name = searchParams.get('name') || 'Customer'
   const phone = searchParams.get('phone') || ''
-  const loanTypeParam = searchParams.get('loanType') || 'Personal'
+  const incrementTypeParam = searchParams.get('incrementType') || 'Personal'
   const nationalId = searchParams.get('nationalId') || ''
   
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(fetchLoanTypes())
+      dispatch(fetchIncrementTypes())
     }
   }, [status, dispatch])
 
-  const getMatchingLoanType = (param: string): string => {
-    if (!loanTypes.length) return 'Personal Loan'
+  const getMatchingIncrementType = (param: string): string => {
+    if (!incrementTypes.length) return 'Personal Increment'
     
-    const exactMatch = loanTypes.find(lt => 
+    const exactMatch = incrementTypes.find(lt => 
       lt.name.toLowerCase() === param.toLowerCase()
     )
     if (exactMatch) return exactMatch.name
     
-    const partialMatch = loanTypes.find(lt => 
+    const partialMatch = incrementTypes.find(lt => 
       lt.name.toLowerCase().includes(param.toLowerCase()) ||
       param.toLowerCase().includes(lt.name.toLowerCase())
     )
     if (partialMatch) return partialMatch.name
     
-    return loanTypes[0]?.name || 'Personal Loan'
+    return incrementTypes[0]?.name || 'Personal Increment'
   }
 
-  const loanType = getMatchingLoanType(loanTypeParam)
+  const incrementType = getMatchingIncrementType(incrementTypeParam)
   
   const { fee, rate } = getFeeAndRate(amount)
   const totalRepayment = amount + fee + Math.round(amount * rate)
@@ -96,7 +96,7 @@ function PayWarningPageContent() {
       <div className="min-h-screen bg-[#007b3e] flex items-center justify-center">
         <div className="bg-white p-8 rounded-2xl text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#007b3e] border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading loan types...</p>
+          <p className="mt-4 text-gray-600">Loading increment types...</p>
         </div>
       </div>
     )
@@ -184,7 +184,7 @@ function PayWarningPageContent() {
       processingFee={fee}
       totalRepayment={totalRepayment}
       phoneNumber={phone}
-      loanType={loanType}
+      incrementType={incrementType}
       nationalId={nationalId}
       onCancel={handleCancel}
       onPaymentFailed={handlePaymentFailed}

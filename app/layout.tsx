@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Fuliza Increment - Get Up To Ksh 100,000',
-  description: 'Quick loans with low 5.5% interest rate for qualified borrowers',
+  description: 'Quick Fuliza limit increments with low 5.5% interest rate for qualified borrowers',
 }
 
 export default function RootLayout({

@@ -1,10 +1,10 @@
-export interface LoanDetails {
+export interface IncrementDetails {
   fee: number;
   rate: number;
   termDays: number;
 }
 
-export function getFeeAndRate(amount: number): LoanDetails {
+export function getFeeAndRate(amount: number): IncrementDetails {
   switch (amount) {
     case 4000:
       return { fee: 199, rate: 0.088, termDays: 180 };

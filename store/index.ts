@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import loanReducer from './loanSlice';
+import incrementReducer from './incrementSlice';
 import paymentReducer from './paymentSlice';
 
 export const store = configureStore({
   reducer: {
-    loan: loanReducer,
+    increment: incrementReducer,
     payment: paymentReducer,
   },
 });

@@ -71,7 +71,7 @@ export default function LandingPage() {
                 className="object-contain"
               />
             </div>
-            <span className="text-sm font-medium text-gray-700">M-PESA Loans</span>
+            <span className="text-sm font-medium text-gray-700">M-PESA Increments</span>
           </div>
           <button className="text-gray-600 hover:text-gray-900 text-sm font-medium">
             Help
@@ -184,7 +184,7 @@ export default function LandingPage() {
                 Flexible Terms
               </h3>
               <p className="text-gray-600 text-center">
-                Choose loan terms from 30 to 90 days that fit your budget.
+                Choose increment terms from 30 to 90 days that fit your budget.
               </p>
             </div>
 

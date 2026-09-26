@@ -4,72 +4,72 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { ArrowLeft, CheckCircle, Info, Loader2 } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { fetchLoanTypes, setSelectedLoanAmount, setLoanType } from '@/store/loanSlice'
-import { getFeeAndRate } from '@/utils/loan'
+import { fetchIncrementTypes, setSelectedIncrementAmount, setIncrementType } from '@/store/incrementSlice'
+import { getFeeAndRate } from '@/utils/increment'
 
-interface LoanSelectionPageProps {
+interface IncrementSelectionPageProps {
   userName: string
   phoneNumber: string
   onBack: () => void
-  onSelectLoan: (amount: number) => void
+  onSelectIncrement: (amount: number) => void
 }
 
-export default function LoanSelectionPage({ 
+export default function IncrementSelectionPage({ 
   userName, 
   phoneNumber,
   onBack, 
-  onSelectLoan 
-}: LoanSelectionPageProps) {
+  onSelectIncrement 
+}: IncrementSelectionPageProps) {
   const dispatch = useAppDispatch()
-  const { loanTypes, status, error } = useAppSelector((state) => state.loan)
+  const { incrementTypes, status, error } = useAppSelector((state) => state.increment)
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
-  const [selectedLoanType, setSelectedLoanType] = useState<string>('')
+  const [selectedIncrementType, setSelectedIncrementType] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
 
-  // Fetch loan types when component mounts
+  // Fetch increment types when component mounts
   useEffect(() => {
-    const loadLoanTypes = async () => {
+    const loadIncrementTypes = async () => {
       try {
-        await dispatch(fetchLoanTypes()).unwrap()
+        await dispatch(fetchIncrementTypes()).unwrap()
       } catch (err) {
-        console.error('Failed to fetch loan types:', err)
+        console.error('Failed to fetch increment types:', err)
       } finally {
         setIsLoading(false)
       }
     }
     
-    loadLoanTypes()
+    loadIncrementTypes()
   }, [dispatch])
 
-  // Generate loan options from API data
-  const generateLoanOptions = () => {
+  // Generate increment options from API data
+  const generateIncrementOptions = () => {
     const options: Array<{
       amount: number
       label: string
-      loanType: string
+      incrementType: string
       description?: string
     }> = []
 
-    loanTypes.forEach((loan) => {
-      // Use max_amount if available, otherwise generate amounts based on loan type
-      if (loan.max_amount) {
+    incrementTypes.forEach((increment) => {
+      // Use max_amount if available, otherwise generate amounts based on increment type
+      if (increment.max_amount) {
         options.push({
-          amount: loan.max_amount,
-          label: `KSh ${loan.max_amount.toLocaleString()}`,
-          loanType: loan.name,
-          description: loan.description
+          amount: increment.max_amount,
+          label: `KSh ${increment.max_amount.toLocaleString()}`,
+          incrementType: increment.name,
+          description: increment.description
         })
       } else {
-        // Generate dynamic amounts based on loan type name
-        const baseAmount = getBaseAmountForLoanType(loan.name)
+        // Generate dynamic amounts based on increment type name
+        const baseAmount = getBaseAmountForIncrementType(increment.name)
         const amounts = generateAmounts(baseAmount)
         
         amounts.forEach(amount => {
           options.push({
             amount: amount,
             label: `KSh ${amount.toLocaleString()}`,
-            loanType: loan.name,
-            description: loan.description
+            incrementType: increment.name,
+            description: increment.description
           })
         })
       }
@@ -78,9 +78,9 @@ export default function LoanSelectionPage({
     return options
   }
 
-  // Helper: Get base amount based on loan type
-  const getBaseAmountForLoanType = (loanName: string): number => {
-    const name = loanName.toLowerCase()
+  // Helper: Get base amount based on increment type
+  const getBaseAmountForIncrementType = (incrementName: string): number => {
+    const name = incrementName.toLowerCase()
     if (name.includes('business') || name.includes('enterprise')) return 50000
     if (name.includes('education') || name.includes('school')) return 20000
     if (name.includes('emergency') || name.includes('urgent')) return 10000
@@ -103,38 +103,38 @@ export default function LoanSelectionPage({
   const fallbackOptions: Array<{
     amount: number
     label: string
-    loanType: string
+    incrementType: string
     description?: string
   }> = [
-    { amount: 5000, label: 'KSh 5,000', loanType: 'Personal' },
-    { amount: 10000, label: 'KSh 10,000', loanType: 'Personal' },
-    { amount: 20000, label: 'KSh 20,000', loanType: 'Personal' },
-    { amount: 30000, label: 'KSh 30,000', loanType: 'Business' },
-    { amount: 50000, label: 'KSh 50,000', loanType: 'Business' },
-    { amount: 75000, label: 'KSh 75,000', loanType: 'Education' },
-    { amount: 100000, label: 'KSh 100,000', loanType: 'Education' },
+    { amount: 5000, label: 'KSh 5,000', incrementType: 'Personal' },
+    { amount: 10000, label: 'KSh 10,000', incrementType: 'Personal' },
+    { amount: 20000, label: 'KSh 20,000', incrementType: 'Personal' },
+    { amount: 30000, label: 'KSh 30,000', incrementType: 'Business' },
+    { amount: 50000, label: 'KSh 50,000', incrementType: 'Business' },
+    { amount: 75000, label: 'KSh 75,000', incrementType: 'Education' },
+    { amount: 100000, label: 'KSh 100,000', incrementType: 'Education' },
   ]
 
-  const displayOptions = loanTypes.length > 0 ? generateLoanOptions() : fallbackOptions
+  const displayOptions = incrementTypes.length > 0 ? generateIncrementOptions() : fallbackOptions
 
-  // Group options by loan type
+  // Group options by increment type
   const groupedOptions = displayOptions.reduce((acc, option) => {
-    if (!acc[option.loanType]) {
-      acc[option.loanType] = []
+    if (!acc[option.incrementType]) {
+      acc[option.incrementType] = []
     }
-    acc[option.loanType].push(option)
+    acc[option.incrementType].push(option)
     return acc
   }, {} as Record<string, typeof displayOptions>)
 
-  const handleSelect = (amount: number, loanType: string) => {
+  const handleSelect = (amount: number, incrementType: string) => {
     setSelectedAmount(amount)
-    setSelectedLoanType(loanType)
-    dispatch(setSelectedLoanAmount(amount))
-    dispatch(setLoanType(loanType))
+    setSelectedIncrementType(incrementType)
+    dispatch(setSelectedIncrementAmount(amount))
+    dispatch(setIncrementType(incrementType))
     
     // Navigate to confirmation after a brief delay
     setTimeout(() => {
-      onSelectLoan(amount)
+      onSelectIncrement(amount)
     }, 500)
   }
 
@@ -145,7 +145,7 @@ export default function LoanSelectionPage({
         <div className="container-custom py-8">
           <div className="text-center py-12">
             <Loader2 className="w-12 h-12 animate-spin text-[#0f766e] mx-auto" />
-            <p className="mt-4 text-gray-600">Loading loan options...</p>
+            <p className="mt-4 text-gray-600">Loading increment options...</p>
           </div>
         </div>
       </main>
@@ -189,21 +189,21 @@ export default function LoanSelectionPage({
             You&apos;re approved!
           </h1>
           <p className="text-gray-600">
-            Great news, <span className="font-semibold text-[#0f766e]">{userName}</span>! Pick the loan amount that works best for you.
+            Great news, <span className="font-semibold text-[#0f766e]">{userName}</span>! Pick the increment amount that works best for you.
           </p>
-          {loanTypes.length > 0 && (
+          {incrementTypes.length > 0 && (
             <p className="text-sm text-gray-500 mt-2">
-              {loanTypes.length} loan types available
+              {incrementTypes.length} increment types available
             </p>
           )}
         </div>
 
-        {/* Loan Options - Grouped by Type */}
-        {Object.entries(groupedOptions).map(([loanType, options]) => (
-          <div key={loanType} className="mb-8">
+        {/* Increment Options - Grouped by Type */}
+        {Object.entries(groupedOptions).map(([incrementType, options]) => (
+          <div key={incrementType} className="mb-8">
             <h2 className="text-lg font-semibold text-[#0f766e] mb-3 flex items-center gap-2">
               <span className="bg-[#0f766e] w-1 h-6 rounded-full"></span>
-              {loanType} Loans
+              {incrementType} Increments
               {options[0]?.description && (
                 <span className="text-sm font-normal text-gray-500">
                   - {options[0].description}
@@ -215,13 +215,13 @@ export default function LoanSelectionPage({
                 const { fee } = getFeeAndRate(option.amount)
                 return (
                 <div
-                  key={`${option.loanType}-${option.amount}`}
+                  key={`${option.incrementType}-${option.amount}`}
                   className={`bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer p-4 text-center border-2 ${
-                    selectedAmount === option.amount && selectedLoanType === option.loanType
+                    selectedAmount === option.amount && selectedIncrementType === option.incrementType
                       ? 'border-[#0f766e] ring-2 ring-[#0f766e]/20'
                       : 'border-transparent hover:border-gray-200'
                   }`}
-                  onClick={() => handleSelect(option.amount, option.loanType)}
+                  onClick={() => handleSelect(option.amount, option.incrementType)}
                 >
                   <p className="text-lg font-bold text-[#0f766e]">{option.label}</p>
                   <p className="text-xs text-gray-500 mt-1">Repay over 6 months</p>
@@ -230,12 +230,12 @@ export default function LoanSelectionPage({
                   </p>
                   <button
                     className={`mt-3 w-full py-2 px-4 rounded-lg text-sm font-semibold transition-colors ${
-                      selectedAmount === option.amount && selectedLoanType === option.loanType
+                      selectedAmount === option.amount && selectedIncrementType === option.incrementType
                         ? 'bg-[#0f766e] text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                   >
-                    {selectedAmount === option.amount && selectedLoanType === option.loanType 
+                    {selectedAmount === option.amount && selectedIncrementType === option.incrementType 
                       ? '✓ SELECTED' 
                       : 'SELECT'}
                   </button>

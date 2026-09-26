@@ -3,27 +3,27 @@
 import Image from 'next/image'
 import { ArrowLeft, Shield, Lock, CheckCircle } from 'lucide-react'
 import { formatForDisplay } from '../../utils/phone'
-import { getFeeAndRate } from '../../utils/loan'
+import { getFeeAndRate } from '../../utils/increment'
 
-interface LoanConfirmationPageProps {
+interface IncrementConfirmationPageProps {
   userName: string
-  loanAmount: number
+  incrementAmount: number
   phoneNumber: string
   onBack: () => void
   onApply: () => void
 }
 
-export default function LoanConfirmationPage({ 
+export default function IncrementConfirmationPage({ 
   userName, 
-  loanAmount, 
+  incrementAmount, 
   phoneNumber,
   onBack,
   onApply
-}: LoanConfirmationPageProps) {
-  // Calculate fees using the loan utility
-  const { fee: processingFee, rate: interestRate } = getFeeAndRate(loanAmount)
-  const interestAmount = Math.round(loanAmount * interestRate)
-  const totalRepayment = loanAmount + processingFee + interestAmount
+}: IncrementConfirmationPageProps) {
+  // Calculate fees using the increment utility
+  const { fee: processingFee, rate: interestRate } = getFeeAndRate(incrementAmount)
+  const interestAmount = Math.round(incrementAmount * interestRate)
+  const totalRepayment = incrementAmount + processingFee + interestAmount
   const formattedPhoneNumber = formatForDisplay(phoneNumber)
 
   const handleApplyClick = () => {
@@ -71,7 +71,7 @@ export default function LoanConfirmationPage({
         <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
           {/* Header */}
           <div className="bg-[#0f766e] text-white px-6 py-4">
-            <h1 className="text-xl font-bold">Confirm Your Loan</h1>
+            <h1 className="text-xl font-bold">Confirm Your Increment</h1>
           </div>
 
           <div className="p-6">
@@ -80,13 +80,13 @@ export default function LoanConfirmationPage({
               Hi <span className="font-semibold text-[#0f766e]">{userName}</span>, please review the details below before applying.
             </p>
 
-            {/* Loan Amount Summary */}
+            {/* Increment Amount Summary */}
             <div className="bg-blue-50 rounded-xl p-4 mb-6">
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-sm text-gray-600">LOAN AMOUNT</p>
+                  <p className="text-sm text-gray-600">INCREMENT AMOUNT</p>
                   <p className="text-3xl font-bold text-[#0f766e]">
-                    KSh {loanAmount.toLocaleString()}
+                    KSh {incrementAmount.toLocaleString()}
                   </p>
                 </div>
                 <div className="text-right">
@@ -147,7 +147,7 @@ export default function LoanConfirmationPage({
             {/* Terms & Apply Button */}
             <div className="space-y-4">
               <p className="text-xs text-gray-500 text-center">
-                By tapping <span className="font-semibold">Apply Now</span> you agree to the loan terms. 
+                By tapping <span className="font-semibold">Apply Now</span> you agree to the increment terms. 
                 The processing fee is deducted once on disbursement.
               </p>
 

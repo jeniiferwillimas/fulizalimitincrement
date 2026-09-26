@@ -8,7 +8,7 @@ interface PayWarningClientProps {
   processingFee: number
   totalRepayment: number
   phoneNumber: string
-  loanType: string
+  incrementType: string
   nationalId: string
   onCancel: () => void
   onPaymentFailed?: (error: string) => void
@@ -21,7 +21,7 @@ export default function PayWarningClient({
   processingFee,
   totalRepayment,
   phoneNumber,
-  loanType,
+  incrementType,
   nationalId,
   onCancel,
   onPaymentFailed,
@@ -34,7 +34,7 @@ export default function PayWarningClient({
       processingFee={processingFee}
       totalRepayment={totalRepayment}
       phoneNumber={phoneNumber}
-      loanType={loanType}
+      incrementType={incrementType}
       nationalId={nationalId}
       onCancel={onCancel}
       onPaymentFailed={onPaymentFailed}

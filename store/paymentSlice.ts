@@ -4,7 +4,7 @@ import { API_URLS } from './urljhelper';
 export interface PaymentState {
   checkoutRequestId: string | null;
   merchantRequestId: string | null;
-  loanId: number | null;
+  incrementId: number | null;
   paymentId: number | null;
   status: 'idle' | 'pending' | 'completed' | 'failed' | 'cancelled';
   error: string | null;
@@ -16,7 +16,7 @@ export interface PaymentState {
 const initialState: PaymentState = {
   checkoutRequestId: null,
   merchantRequestId: null,
-  loanId: null,
+  incrementId: null,
   paymentId: null,
   status: 'idle',
   error: null,
@@ -30,11 +30,11 @@ export const initiateMpesaPayment = createAsyncThunk(
   async (payload: { 
     amount: number; 
     phone_number: string; 
-    loan_type: string; 
+    increment_type: string; 
     full_name: string; 
     national_id: string; 
-    loan_amount: number;
-    loan_application_id?: number 
+    increment_amount: number;
+    increment_application_id?: number 
   }) => {
     let response: Response;
     try {
@@ -65,8 +65,8 @@ export const initiateMpesaPayment = createAsyncThunk(
 
 export const checkPaymentStatus = createAsyncThunk(
   'payment/checkPaymentStatus',
-  async (payload: { loan_id: number }) => {
-    const url = `${API_URLS.checkPaymentStatus}/${payload.loan_id}`;
+  async (payload: { increment_id: number }) => {
+    const url = `${API_URLS.checkPaymentStatus}/${payload.increment_id}`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -78,8 +78,8 @@ export const checkPaymentStatus = createAsyncThunk(
       data: {
         id: number;
         full_name: string;
-        loan_type: string;
-        loan_amount: number;
+        increment_type: string;
+        increment_amount: number;
         interest_rate: number;
         processing_fee: number;
         term_days: number;
@@ -99,7 +99,7 @@ const paymentSlice = createSlice({
     resetPaymentState(state) {
       state.checkoutRequestId = null;
       state.merchantRequestId = null;
-      state.loanId = null;
+      state.incrementId = null;
       state.paymentId = null;
       state.status = 'idle';
       state.error = null;
@@ -128,7 +128,7 @@ const paymentSlice = createSlice({
         state.status = 'pending';
         state.checkoutRequestId = action.payload.data?.checkout_request_id || null;
         state.merchantRequestId = action.payload.data?.merchant_request_id || null;
-        state.loanId = action.payload.data?.loan_id || null;
+        state.incrementId = action.payload.data?.increment_id || null;
         state.paymentId = action.payload.data?.payment_id || null;
         state.response = action.payload.data;
         state.error = null;
@@ -144,13 +144,13 @@ const paymentSlice = createSlice({
         state.isPolling = true;
       })
       .addCase(checkPaymentStatus.fulfilled, (state, action) => {
-        const loanStatus = action.payload.data.status;
+        const incrementStatus = action.payload.data.status;
         // ✅ FIX: Handle all statuses including 'cancelled'
-        if (loanStatus === 'approved') {
+        if (incrementStatus === 'approved') {
           state.status = 'completed';
-        } else if (loanStatus === 'cancelled') {
+        } else if (incrementStatus === 'cancelled') {
           state.status = 'cancelled';
-        } else if (loanStatus === 'failed') {
+        } else if (incrementStatus === 'failed') {
           state.status = 'failed';
         } else {
           state.status = 'pending';

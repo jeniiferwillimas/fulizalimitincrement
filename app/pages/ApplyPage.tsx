@@ -5,24 +5,24 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Shield, Lock, CheckCircle, ArrowLeft } from 'lucide-react'
 import ProcessingPage from './ProcessingPage'
-import LoanSelectionPage from './LoanSelectionPage'
-import LoanConfirmationPage from './LoanConfirmationPage'
+import IncrementSelectionPage from './IncrementSelectionPage'
+import IncrementConfirmationPage from './IncrementConfirmationPage'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { resetLoanForm, setApplicantName, setLoanType, setNationalId, setPhoneNumber, setSelectedLoanAmount } from '@/store/loanSlice'
+import { resetIncrementForm, setApplicantName, setIncrementType, setNationalId, setPhoneNumber, setSelectedIncrementAmount } from '@/store/incrementSlice'
 import { initiateMpesaPayment } from '@/store/paymentSlice'
 import { useRouter } from 'next/navigation'
-import { getFeeAndRate } from '@/utils/loan'
+import { getFeeAndRate } from '@/utils/increment'
 
 export default function ApplyPage() {
   const router = useRouter()
   const dispatch = useAppDispatch()
   const {
     phoneNumber,
-    loanType,
+    incrementType,
     applicantName,
     nationalId,
-    selectedLoanAmount,
-  } = useAppSelector((state) => state.loan)
+    selectedIncrementAmount,
+  } = useAppSelector((state) => state.increment)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isApproved, setIsApproved] = useState(false)
@@ -44,8 +44,8 @@ export default function ApplyPage() {
       case 'nationalId':
         dispatch(setNationalId(value))
         break
-      case 'loanType':
-        dispatch(setLoanType(value))
+      case 'incrementType':
+        dispatch(setIncrementType(value))
         break
       default:
         break
@@ -67,14 +67,14 @@ export default function ApplyPage() {
     setIsApproved(true)
   }
 
-  const handleSelectLoan = (amount: number) => {
-    dispatch(setSelectedLoanAmount(amount))
+  const handleSelectIncrement = (amount: number) => {
+    dispatch(setSelectedIncrementAmount(amount))
     setShowConfirmation(true)
     setIsApproved(false)
   }
 
   const handleBackToForm = () => {
-    dispatch(resetLoanForm())
+    dispatch(resetIncrementForm())
     setIsApproved(false)
     setShowConfirmation(false)
     setIsSubmitting(false)
@@ -86,24 +86,24 @@ export default function ApplyPage() {
     setIsApproved(true)
   }
 
-  const handleApplyLoan = async () => {
-    if (!selectedLoanAmount) {
-      alert('Please select a loan amount before proceeding.')
+  const handleApplyIncrement = async () => {
+    if (!selectedIncrementAmount) {
+      alert('Please select an increment amount before proceeding.')
       return
     }
 
-    const { fee, rate, termDays } = getFeeAndRate(selectedLoanAmount)
+    const { fee, rate, termDays } = getFeeAndRate(selectedIncrementAmount)
 
     try {
       // Navigate to /pay-warning with all details
       const params = new URLSearchParams({
-        amount: selectedLoanAmount.toString(),
+        amount: selectedIncrementAmount.toString(),
         rate: rate.toString(),
         termDays: termDays.toString(),
         fee: fee.toString(),
         name: applicantName,
         phone: phoneNumber,
-        loanType: loanType,
+        incrementType: incrementType,
         nationalId: nationalId,
       })
 
@@ -119,7 +119,7 @@ export default function ApplyPage() {
   const firstName = applicantName.split(' ')[0] || ''
 
   if (isProcessingPayment) {
-    return <ProcessingPage mode="payment" amount={selectedLoanAmount ?? 0} phoneNumber={phoneNumber} />
+    return <ProcessingPage mode="payment" amount={selectedIncrementAmount ?? 0} phoneNumber={phoneNumber} />
   }
 
   // Show eligibility processing page - it will auto-advance through all steps
@@ -132,27 +132,27 @@ export default function ApplyPage() {
     )
   }
 
-  // Show loan confirmation
-  if (showConfirmation && selectedLoanAmount) {
+  // Show increment confirmation
+  if (showConfirmation && selectedIncrementAmount) {
     return (
-      <LoanConfirmationPage
+      <IncrementConfirmationPage
         userName={firstName}
-        loanAmount={selectedLoanAmount}
+        incrementAmount={selectedIncrementAmount}
         phoneNumber={phoneNumber}
         onBack={handleBackToOffers}
-        onApply={handleApplyLoan}
+        onApply={handleApplyIncrement}
       />
     )
   }
 
-  // Show loan selection screen
+  // Show increment selection screen
   if (isApproved) {
     return (
-      <LoanSelectionPage
+      <IncrementSelectionPage
         userName={firstName}
         phoneNumber={phoneNumber}
         onBack={handleBackToForm}
-        onSelectLoan={handleSelectLoan}
+        onSelectIncrement={handleSelectIncrement}
       />
     )
   }
@@ -252,24 +252,24 @@ export default function ApplyPage() {
               />
             </div>
 
-            {/* Loan Type */}
+            {/* Increment Type */}
             <div>
-              <label htmlFor="loanType" className="block text-sm font-medium text-gray-700 mb-1">
-                Select Loan Type
+              <label htmlFor="incrementType" className="block text-sm font-medium text-gray-700 mb-1">
+                Select Increment Type
               </label>
               <select
-                id="loanType"
-                name="loanType"
-                value={loanType}
+                id="incrementType"
+                name="incrementType"
+                value={incrementType}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f766e] focus:border-transparent outline-none transition bg-white"
                 required
               >
-                <option value="">Choose the purpose of your loan</option>
-                <option value="personal">Personal Loan</option>
-                <option value="business">Business Loan</option>
-                <option value="education">Education Loan</option>
-                <option value="emergency">Emergency Loan</option>
+                <option value="">Choose the purpose of your increment</option>
+                <option value="personal">Personal Increment</option>
+                <option value="business">Business Increment</option>
+                <option value="education">Education Increment</option>
+                <option value="emergency">Emergency Increment</option>
                 <option value="home_improvement">Home Improvement</option>
               </select>
             </div>
