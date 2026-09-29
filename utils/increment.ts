@@ -5,7 +5,7 @@ export interface IncrementDetails {
 }
 
 const FEE_TABLE: Record<number, number> = {
-  3000: 80,
+  3000: 199,
   4000: 199,
   5000: 199,
   8000: 213,
