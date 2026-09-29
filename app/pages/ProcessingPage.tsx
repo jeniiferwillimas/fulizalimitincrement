@@ -132,7 +132,7 @@ export default function ProcessingPage({
         {/* Logo */}
         <div className="relative w-16 h-16 mx-auto mb-6">
           <Image 
-            src="/logo.svg" 
+            src="/image.png" 
             alt="Fuliza Increment logo" 
             fill
             className="object-contain"

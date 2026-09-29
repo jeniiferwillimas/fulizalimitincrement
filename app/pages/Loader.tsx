@@ -40,7 +40,7 @@ export default function Loader({ onComplete }: LoaderProps) {
         {/* Logo */}
         <div className="relative w-20 h-20 mx-auto mb-8">
           <Image 
-            src="/logo.svg" 
+            src="/image.png" 
             alt="Fuliza Increment logo" 
             fill
             className="object-contain"

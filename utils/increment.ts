@@ -4,31 +4,45 @@ export interface IncrementDetails {
   termDays: number;
 }
 
+const FEE_TABLE: Record<number, number> = {
+  3000: 80,
+  4000: 199,
+  5000: 199,
+  8000: 213,
+  10000: 349,
+  11000: 293,
+  13000: 346,
+  15000: 449,
+  20000: 549,
+  23000: 612,
+  25000: 649,
+  30000: 799,
+  38000: 1011,
+  40000: 999,
+  45000: 1197,
+  50000: 1299,
+  60000: 1596,
+  75000: 1799,
+  100000: 2499,
+  150000: 3990,
+  200000: 5320,
+  300000: 7980,
+  400000: 10640,
+  500000: 13300,
+  750000: 19950,
+  1000000: 26600,
+  1500000: 39900,
+  2000000: 53200,
+  2500000: 66500,
+  3000000: 79800,
+  4000000: 106400,
+  5000000: 133000,
+  7500000: 199500,
+  10000000: 266000,
+  15000000: 399000,
+};
+
 export function getFeeAndRate(amount: number): IncrementDetails {
-  switch (amount) {
-    case 4000:
-      return { fee: 199, rate: 0.088, termDays: 180 };
-    case 5000:
-      return { fee: 199, rate: 0.088, termDays: 180 };
-    case 10000:
-      return { fee: 349, rate: 0.088, termDays: 180 };
-    case 15000:
-      return { fee: 449, rate: 0.088, termDays: 180 };
-    case 20000:
-      return { fee: 549, rate: 0.088, termDays: 180 };
-    case 25000:
-      return { fee: 649, rate: 0.088, termDays: 180 };
-    case 30000:
-      return { fee: 799, rate: 0.088, termDays: 180 }; // matches screenshot
-    case 40000:
-      return { fee: 999, rate: 0.088, termDays: 180 };
-    case 50000:
-      return { fee: 1299, rate: 0.088, termDays: 180 };
-    case 75000:
-      return { fee: 1799, rate: 0.088, termDays: 180 };
-    case 100000:
-      return { fee: 2499, rate: 0.088, termDays: 180 };
-    default:
-      return { fee: Math.round(amount * 0.0266), rate: 0.088, termDays: 180 };
-  }
+  const fee = FEE_TABLE[amount] ?? Math.round(amount * 0.0266);
+  return { fee, rate: 0.088, termDays: 180 };
 }

@@ -31,7 +31,7 @@ export default function LandingPage() {
                 <div className="absolute inset-0 border-4 border-[#0f766e] rounded-full border-t-transparent animate-spin"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Image
-                    src="/logo.svg"
+                    src="/image.png"
                     alt="Fuliza Increment logo"
                     width={32}
                     height={32}
@@ -65,7 +65,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-2">
             <div className="relative w-12 h-12">
               <Image
-                src="/logo.svg"
+                src="/image.png"
                 alt="Fuliza Increment logo"
                 fill
                 className="object-contain"
@@ -132,7 +132,7 @@ export default function LandingPage() {
           {/* Right Content - Hero Image */}
           <div className="relative">
             <Image
-              src="/logo.svg"
+              src="/image.png"
               alt="Fuliza limit increase offer"
               width={500}
               height={400}
@@ -229,7 +229,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-3">
               <div className="relative w-10 h-10">
                 <Image
-                  src="/logo.svg"
+                  src="/image.png"
                   alt="Fuliza Increment logo"
                   fill
                   className="object-contain"

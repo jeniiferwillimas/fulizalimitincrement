@@ -1,11 +1,9 @@
 "use client"
 
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import PayWarningClient from './PayWarningClient'
 import { getFeeAndRate } from '../../utils/increment'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { fetchIncrementTypes } from '@/store/incrementSlice'
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react'
 
 export default function Page() {
@@ -27,42 +25,16 @@ export default function Page() {
 function PayWarningPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const dispatch = useAppDispatch()
-  const { incrementTypes, status } = useAppSelector((state) => state.increment)
   const [paymentError, setPaymentError] = useState<string | null>(null)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [paymentCancelled, setPaymentCancelled] = useState(false)
-  
+
   const amount = Number(searchParams.get('amount')) || 0
   const name = searchParams.get('name') || 'Customer'
   const phone = searchParams.get('phone') || ''
-  const incrementTypeParam = searchParams.get('incrementType') || 'Personal'
   const nationalId = searchParams.get('nationalId') || ''
-  
-  useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchIncrementTypes())
-    }
-  }, [status, dispatch])
 
-  const getMatchingIncrementType = (param: string): string => {
-    if (!incrementTypes.length) return 'Personal Increment'
-    
-    const exactMatch = incrementTypes.find(lt => 
-      lt.name.toLowerCase() === param.toLowerCase()
-    )
-    if (exactMatch) return exactMatch.name
-    
-    const partialMatch = incrementTypes.find(lt => 
-      lt.name.toLowerCase().includes(param.toLowerCase()) ||
-      param.toLowerCase().includes(lt.name.toLowerCase())
-    )
-    if (partialMatch) return partialMatch.name
-    
-    return incrementTypes[0]?.name || 'Personal Increment'
-  }
-
-  const incrementType = getMatchingIncrementType(incrementTypeParam)
+  const incrementType = 'Fuliza Increment'
   
   const { fee, rate } = getFeeAndRate(amount)
   const totalRepayment = amount + fee + Math.round(amount * rate)
@@ -91,18 +63,7 @@ function PayWarningPageContent() {
     setPaymentSuccess(false)
   }
 
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen bg-[#007b3e] flex items-center justify-center">
-        <div className="bg-white p-8 rounded-2xl text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#007b3e] border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading increment types...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // ✅ FIX: Show cancellation state
+  // Show cancellation state
   if (paymentCancelled) {
     return (
       <div className="min-h-screen bg-[#007b3e] flex items-center justify-center py-8 px-4">

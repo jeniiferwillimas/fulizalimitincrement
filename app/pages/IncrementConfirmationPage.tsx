@@ -42,7 +42,7 @@ export default function IncrementConfirmationPage({
             <div className="flex items-center gap-2">
               <div className="relative w-10 h-10">
                 <Image 
-                  src="/logo.svg" 
+                  src="/image.png" 
                   alt="Fuliza Increment logo" 
                   fill
                   className="object-contain"

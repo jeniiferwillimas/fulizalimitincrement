@@ -1,15 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { API_URLS } from './urljhelper';
-
-export interface IncrementType {
-  id: number;
-  name: string;
-  description?: string;
-  max_amount?: number;
-}
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface IncrementState {
-  incrementTypes: IncrementType[];
   selectedIncrementAmount: number | null;
   phoneNumber: string;
   incrementType: string;
@@ -20,7 +11,6 @@ export interface IncrementState {
 }
 
 const initialState: IncrementState = {
-  incrementTypes: [],
   selectedIncrementAmount: null,
   phoneNumber: '',
   incrementType: '',
@@ -29,15 +19,6 @@ const initialState: IncrementState = {
   status: 'idle',
   error: null,
 };
-
-export const fetchIncrementTypes = createAsyncThunk('increment/fetchIncrementTypes', async () => {
-  const response = await fetch(API_URLS.incrementTypes);
-  if (!response.ok) {
-    throw new Error('Failed to load increment types');
-  }
-  const result = (await response.json()) as { success: boolean; data: IncrementType[] };
-  return result.data;
-});
 
 const incrementSlice = createSlice({
   name: 'increment',
@@ -67,21 +48,6 @@ const incrementSlice = createSlice({
       state.status = 'idle';
       state.error = null;
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchIncrementTypes.pending, (state) => {
-        state.status = 'loading';
-        state.error = null;
-      })
-      .addCase(fetchIncrementTypes.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.incrementTypes = action.payload;
-      })
-      .addCase(fetchIncrementTypes.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message ?? 'Unable to fetch increment types';
-      });
   },
 });
 
