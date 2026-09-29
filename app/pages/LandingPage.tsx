@@ -84,7 +84,7 @@ export default function LandingPage() {
                 Increase your Fuliza limit today
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-                Boost Your <span className="text-[#4ade80]">Fuliza Limit</span> Up To <span className="text-[#fbbf24]">KSh 15M</span>
+                Get Up To <span className="text-[#fbbf24]">KSh 100,000</span> <span className="text-[#4ade80]">Fuliza Increment</span>
               </h1>
               <p className="text-lg text-white/80 mb-4">
                 Running out of Fuliza? Increase your M-PESA Fuliza limit instantly. Pay a small processing fee and get a higher limit credited to your account.
@@ -136,7 +136,7 @@ export default function LandingPage() {
               <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-lg">
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-[#0f766e]">KSh 15M</p>
+                    <p className="text-2xl font-bold text-[#0f766e]">KSh 100K</p>
                     <p className="text-xs text-gray-600">Max Increment</p>
                   </div>
                   <div className="text-center border-l border-r border-gray-200">
